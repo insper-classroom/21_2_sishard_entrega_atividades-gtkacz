@@ -16,13 +16,13 @@
 //rdx = long c;
 //eax = int resposta;
 
-int solucao(int a, long b, long c){
+int solucao(int a, long b, long *c){
     int r;
 
     a += a;
     r = b + 2*b;
     r += a;
-    c = r;
+    *c = r;
     r = b + 4*b;
     r += a;
 
