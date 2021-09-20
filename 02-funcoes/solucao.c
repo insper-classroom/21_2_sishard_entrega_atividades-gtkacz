@@ -13,7 +13,7 @@
 
 //edi = int a;
 //rsi = long b;
-//rdx = long c;
+//rdx = long *c;
 //eax = int resposta;
 
 int solucao(int a, long b, long *c){

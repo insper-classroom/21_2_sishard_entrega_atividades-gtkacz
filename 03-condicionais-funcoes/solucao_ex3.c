@@ -14,25 +14,23 @@
 //    0x0000000000000022 <+34>:    retq
 // End of assembler dump.
 
-//rsi = long a;
-//rdi = long b;
+//rdi = long a;
+//rsi = long b;
 //eax = int r;
 //rdx = long *c;
 //rcx = long *d;
 //r8 = long *e;
 
-long solucao_ex3(long a, long b){
+void solucao_ex3(long a, long b, int *c, int *d, int *e){
     int r;
-    long *c, *d, *e;
+    //int *c, *d, *e;
 
-    r = b < a;
+    r = (a < b);
     *c = r;
 
-    r = b == a;
+    r = (a == b);
     *d = r;
 
-    r = b > a;
+    r = (a > b);
     *e = r;
-
-    return r;
 }
