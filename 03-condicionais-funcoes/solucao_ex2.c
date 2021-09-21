@@ -1,6 +1,5 @@
 long vezes2(long a);
 
-<<<<<<< HEAD
 // Dump of assembler code for function ex2:
 //    0x0000000000000005 <+0>:     push   %rbx
 //    0x0000000000000006 <+1>:     mov    %rdi,%rbx
@@ -35,7 +34,3 @@ long solucao_ex2(long a, long b){
 
     return r;
 }
-=======
-/* Implementar função solucao_ex2 */
-
->>>>>>> template/main
