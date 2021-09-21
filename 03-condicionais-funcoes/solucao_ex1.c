@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // Dump of assembler code for function ex1:
 //    0x0000000000000000 <+0>:     lea    (%rdi,%rsi,1),%rax
 //    0x0000000000000004 <+4>:     lea    (%rax,%rdx,4),%rcx
@@ -30,3 +31,8 @@ int solucao_ex1(long a, long b, long c){
 
     return f;
 }
+=======
+/* Implementar função solucao_ex1 */
+
+
+>>>>>>> template/main
