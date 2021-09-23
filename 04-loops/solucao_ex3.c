@@ -16,6 +16,20 @@
 //    0x000000000000002b <+43>:    retq
 // End of assembler dump.
 
-void ex3_solucao(){
-    return;
+long ex3_solucao(long a, long b){
+    long r;
+    int c = 0;
+    int d = 0;
+    long df = (long) d;
+
+    while(!(df >= a)){
+        r = df % b;
+        if (!(r != 0)){
+            c += df;
+        }
+    df++;
+    }
+    r = c;
+
+    return r;
 }

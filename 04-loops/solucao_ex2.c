@@ -18,7 +18,6 @@
 int soma_n_solucao(long c, int a){
     long r;
     int b = 0;
-    int ri = 0;
 
     while(b < a){
         c = (long) b;
