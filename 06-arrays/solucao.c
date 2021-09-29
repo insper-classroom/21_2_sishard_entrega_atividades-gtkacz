@@ -16,22 +16,22 @@
 //    0x000000000000013c <+40>:    repz retq
 // End of assembler dump.
 
-long solucao(long rsi[], long rdi[], int edx){
-    long rax, rcx, eax;
+void solucao(short *rdi, short *rsi, int edx){
+    long rax, rcx;
+    int eax;
 
     edx--;
 
     while(!(edx < 0)){
         rax = edx;
-        rcx = 2*rax;
-        eax = rdi[2*rax];
+        eax = rdi[rax];
 
         if(!(eax <= 0)){
-            rsi[rcx] = (char) eax;
+            rsi[edx] = eax;
         }
         else{
             eax = -eax;
-            rsi[rcx] = (char) eax;
+            rsi[edx] = eax;
         }
         edx--;
     }
