@@ -24,14 +24,14 @@ void solucao(short *rdi, short *rsi, int edx){
 
     while(!(edx < 0)){
         rax = edx;
-        eax = rdi[rax];
-
+        rcx = 2*rax;
+        eax = (short) rdi[rax];
         if(!(eax <= 0)){
-            rsi[edx] = eax;
+            rsi[rax] = eax;
         }
         else{
             eax = -eax;
-            rsi[edx] = eax;
+            rsi[rax] = eax;
         }
         edx--;
     }

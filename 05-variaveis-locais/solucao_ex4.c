@@ -16,17 +16,13 @@
 //    0x0000000000000034 <+52>:    retq
 // End of assembler dump.
 
-int ex4_solucao(int a){
-    long b, c;
-    int d, r, e;
+int global = -72;
 
-    d = a;
-    r = 0;
-    scanf("%d %d", &c, &b);
-    e = b;
-    r = c;
-    r += (b*2);
-    r += d;
+int ex4_solucao(int edi){
+    int ebx, rsi, eax;
+    long rdx, rdi;
 
-    return r;
+    ebx = edi;
+    rdi = global;
+    eax = 0;
 }
