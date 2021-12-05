@@ -88,7 +88,7 @@ int main(int argc, char *argv[]){
 		for (int i = 0; i < len_file; i++){
             FILE *output;
             CURL *curl;
-            int result;
+            CURLcode result;
             parallel = fork();
             if (!parallel){
                 for (b = 0; arr[i][b] != '\0'; b++);
@@ -140,7 +140,7 @@ int main(int argc, char *argv[]){
 		char url_c[50];
         FILE *output;
         CURL *curl;
-        int result;
+        CURLcode result;
 
     	char url_c[256] = process_url_name(arr[i]);
 
