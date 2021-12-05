@@ -145,7 +145,7 @@ int main(int argc, char *argv[]){
 
        char url_c[256] = process_url_name(arr[i]);
 
-        output = fopen(url_c, "wb");
+        output = fopen(url_c, 'wb');
 
         curl = curl_easy_init();
         curl_easy_setopt(curl, CURLOPT_URL, argv[1]);
@@ -158,10 +158,19 @@ int main(int argc, char *argv[]){
             printf('URL %s baixada com sucesso.', url);
             fclose(output);
             curl_easy_cleanup(curl);
-        } else{
-            printf("Erro: %s\n", curl_easy_strerror(result));
+        }
+		else{
+            printf('Erro: %s\n', curl_easy_strerror(result));
         }  
     }
 
 	return 0;
 }
+
+//BIBLIOGRAFIA
+//https://www.apriorit.com/dev-blog/344-libcurl-usage-downloading-protocols
+//https://curl.se/libcurl/c/https.html
+//https://stackoverflow.com/questions/9206091/going-through-a-text-file-line-by-line-in-c/9206332
+//https://curl.se/libcurl/c/libcurl-easy.html
+//https://www.techgalery.com/2020/12/step-by-step-using-curl-library-using-c.html
+//https://stackoverflow.com/questions/1636333/download-file-using-libcurl-in-c-c
