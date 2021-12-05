@@ -14,8 +14,7 @@ char process_url_name(char *str){
 	size_t len = strlen(str);
 	char resposta[1024] = '';
 	int found_1 = 0;
-	int found_2 = 0;
-	int found_3 = 0;
+	int found_c = 0;
 	int idx_dot;
 
 	for (i = 0; i < len; i++){
@@ -29,15 +28,11 @@ char process_url_name(char *str){
 			found_1 = 1;
 		}
 
-		if (found1 && !found2 && str[i] == '/'){
-			found2 = 1;
+		if (found1 && (str[i] == '/') && (found_c < 2)){
+			c++;
 		}
 
-		if (found2 && !found3 && str[i] == '/'){
-			found3 = 1;
-		}
-
-		if (found1 && found2 && found3){
+		if (found1 && (found_c >= 2)){
 			if ((str[i] != '/') && (str[i] != '.')){
 				strcat(resposta, str[i]);
 			}
