@@ -136,7 +136,7 @@ int main(int argc, char *argv[]){
         }
 	}
 	
-	else(){
+	else{
 		char url_c[50];
         FILE *output;
         CURL *curl;
