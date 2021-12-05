@@ -12,7 +12,7 @@
 
 char process_url_name(char *str){
 	size_t len = strlen(str);
-    char resposta[1024] = '';
+	char resposta[1024] = '';
 	int found_1 = 0;
 	int found_2 = 0;
 	int found_3 = 0;
@@ -64,7 +64,7 @@ int main(int argc, char *argv[]){
 	CURL *curl;
 	CURLcode res;
 	char input_filename[];
-	pid_t paralel;
+	pid_t parallel;
 	int multiple = 0;
 
 	if(argc < 2) {
@@ -84,6 +84,7 @@ int main(int argc, char *argv[]){
 		int len_file = 0;
 		char line[256];
         char arr[5][256] = {''};
+
         while (fgets(line, sizeof(line), input)){
 			len_file++;
             strcpy(arr[len_file], line);
@@ -93,10 +94,10 @@ int main(int argc, char *argv[]){
             FILE *output;
             CURL *curl;
             int result;
-            paralel = fork();
-            if (!paralel){
+            parallel = fork();
+            if (!parallel){
                 for (b = 0; arr[i][b] != '\0'; b++);
-                if ((arr[i][b-1] = '\n')) {
+                if((arr[i][b-1] = '\n')){
                     arr[i][b-1] = '\0';
                 }
             
@@ -120,7 +121,9 @@ int main(int argc, char *argv[]){
                         curl_easy_cleanup(curl);
                         fclose(output);
                         exit(0);
-                    } else{
+                    }
+
+					else{
                         printf('Erro: %s\n', curl_easy_strerror(result));
                         exit(0);
                     }     
@@ -129,7 +132,8 @@ int main(int argc, char *argv[]){
                     exit(0);
                 }
                   
-            } 
+            }
+
             else {
                 int wst;
                 wait(&wst);
@@ -143,7 +147,7 @@ int main(int argc, char *argv[]){
         CURL *curl;
         int result;
 
-       char url_c[256] = process_url_name(arr[i]);
+    	char url_c[256] = process_url_name(arr[i]);
 
         output = fopen(url_c, 'wb');
 
