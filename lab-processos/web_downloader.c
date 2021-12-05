@@ -3,6 +3,12 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <time.h>
+#include <signal.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/wait.h>
+#include <fcntl.h>
 
 char process_url_name(char *str){
 	size_t len = strlen(str);
@@ -10,6 +16,13 @@ char process_url_name(char *str){
 	int found_1 = 0;
 	int found_2 = 0;
 	int found_3 = 0;
+	int idx_dot;
+
+	for (i = 0; i < len; i++){
+		if (str[i] == '.'){
+			idx_dot = i;
+		}
+	}
 
     for (i = 0; i < len; i++){
 		if (str[i] == ':' && !found1){
@@ -29,7 +42,12 @@ char process_url_name(char *str){
 				strcat(resposta, str[i]);
 			}
 			else{
-				strcat(resposta, '_');
+				if (i != idx_dot){
+					strcat(resposta, '_');
+				}
+				else{
+					strcat(resposta, '.');
+				}
 			}
 		}
 	}
@@ -40,14 +58,6 @@ char process_url_name(char *str){
 size_t write_data(void *ptr, size_t size, size_t nmemb, FILE *stream){
     size_t written = fwrite(ptr, size, nmemb, stream);
     return written;
-}
-
-void slice(const char * str, char * buffer, size_t start, size_t end){
-    size_t j = 0;
-    for ( size_t i = start; i <= end; ++i ) {
-        buffer[j++] = str[i];
-    }
-    buffer[j] = 0;
 }
 
 int main(int argc, char *argv[]){
@@ -82,7 +92,6 @@ int main(int argc, char *argv[]){
 		for (int i = 0; i < len_file; i++){
             FILE *output;
             CURL *curl;
-			char site[256];
             int result;
             paralel = fork();
             if (!paralel){
@@ -90,25 +99,15 @@ int main(int argc, char *argv[]){
                 if ((arr[i][b-1] = '\n')) {
                     arr[i][b-1] = '\0';
                 }
-
-                if (success){
-                    slice(arr[i], site, 8, strlen(arr[i]));
-                }
-				else {
-                    slice(arr[i], site, 7, strlen(arr[i]));
-                }
             
-                //PROCESSA A STRING FILHO DA PUTA
+                char url_c[256] = process_url_name(arr[i]);
                 
-                output = fopen(site, 'wb');
+                output = fopen(url_c, 'wb');
 
-                // Operacoes com Curl
-                // Baseado em: https://www.youtube.com/watch?v=PQF_IU2YXIg&ab_channel=HathibelagalProductions
-                
+				curl_global_init(CURL_GLOBAL_DEFAULT);
                 curl = curl_easy_init();
 
                 if (curl){
-                
                     curl_easy_setopt(curl, CURLOPT_URL, arr[i]);
                     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
                     curl_easy_setopt(curl, CURLOPT_WRITEDATA, output);
@@ -117,15 +116,16 @@ int main(int argc, char *argv[]){
                     result = curl_easy_perform(curl);
 
                     if (result == CURLE_OK){
-                        printf('%s baixado com sucesso!\n\n', arr[i]);
+                        printf('URL %s baixada com sucesso.', url);
                         curl_easy_cleanup(curl);
                         fclose(output);
                         exit(0);
                     } else{
-                        printf('Erro: %s\n\n', curl_easy_strerror(result));
+                        printf('Erro: %s\n', curl_easy_strerror(result));
                         exit(0);
                     }     
-                } else {
+                }
+				else {
                     exit(0);
                 }
                   
@@ -137,25 +137,31 @@ int main(int argc, char *argv[]){
         }
 	}
 	
-	curl_global_init(CURL_GLOBAL_DEFAULT);
- 
-	curl = curl_easy_init();
+	else(){
+		char url_c[50];
+        FILE *output;
+        CURL *curl;
+        int result;
 
-	if(curl){
-		curl_easy_setopt(curl, CURLOPT_URL, 'http://help.websiteos.com/websiteos/example_of_a_simple_html_page.htm');
- 
-		res = curl_easy_perform(curl);
+       char url_c[256] = process_url_name(arr[i]);
 
-		if(res != CURLE_OK)
-			fprintf(stderr, 'curl_easy_perform() falhou: %s\n',
-							curl_easy_strerror(res));
- 
-		curl_easy_cleanup(curl);
-	}
- 
-	curl_global_cleanup();
+        output = fopen(url_c, "wb");
 
-    printf('URL %s baixada com sucesso.', url);
-    
+        curl = curl_easy_init();
+        curl_easy_setopt(curl, CURLOPT_URL, argv[1]);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, output);
+        curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1L);
+
+        result = curl_easy_perform(curl);
+
+        if (result == CURLE_OK){
+            printf('URL %s baixada com sucesso.', url);
+            fclose(output);
+            curl_easy_cleanup(curl);
+        } else{
+            printf("Erro: %s\n", curl_easy_strerror(result));
+        }  
+    }
+
 	return 0;
 }
