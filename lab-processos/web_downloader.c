@@ -16,32 +16,36 @@ void process_url_name(char *str){
 	int found_1 = 0;
 	int found_c = 0;
 	int idx_dot;
+	char dot_str[256] = ".";
+	char slash_str[256] = "/";
+	char double_str[256] = ":";
+	char under_str[256] = "_";
 
 	for (int i = 0; i < len; i++){
-		if (strcmp(str[i], ".")){
+		if (strcmp((char) str[i], dot_str)){
 			idx_dot = i;
 		}
 	}
 
     for (int i = 0; i < len; i++){
-		if (strcmp(str[i], ":") && !found_1){
+		if (strcmp((char) str[i], double_str) && !found_1){
 			found_1 = 1;
 		}
 
-		if (found_1 && strcmp(str[i], "/") && (found_c < 2)){
+		if (found_1 && strcmp((char) str[i], slash_str) && (found_c < 2)){
 			found_c++;
 		}
 
 		if (found_1 && (found_c >= 2)){
-			if (!strcmp(str[i], "/") && !strcmp(str[i], ".")){
-				strcat(resposta, str[i]);
+			if (!strcmp((char) str[i], slash_str) && !strcmp((char) str[i], dot_str)){
+				strcat(resposta, (char) str[i]);
 			}
 			else{
 				if (i != idx_dot){
-					strcat(resposta, "_");
+					strcat(resposta, under_str);
 				}
 				else{
-					strcat(resposta, ".");
+					strcat(resposta, dot_str);
 				}
 			}
 		}
@@ -66,16 +70,16 @@ int main(int argc, char *argv[]) {
     if (strcmp(argv[1], "-f")){
         FILE* fileo = fopen(argv[2], "r");
 		int len_arq = 0;
-        char line[256];
+        char line;
         char char_a[5][256] = {""};
 
-        while (fgets(line, sizeof(line), fileo)){
+        while(fgets(line, sizeof(line), fileo)){
             strcpy(char_a[len_arq], line);
             len_arq++;
         }
 
         for (int i = 0; i < len_arq; i++){
-            char site[256];
+            char site;
             FILE *output;
             CURL *curl;
             int result;
