@@ -12,36 +12,36 @@
 
 char process_url_name(char *str){
 	size_t len = strlen(str);
-	char resposta[1024] = '';
+	char resposta[1024] = "";
 	int found_1 = 0;
 	int found_c = 0;
 	int idx_dot;
 
-	for (i = 0; i < len; i++){
-		if (str[i] == '.'){
+	for (int i = 0; i < len; i++){
+		if (str[i] == "."){
 			idx_dot = i;
 		}
 	}
 
-    for (i = 0; i < len; i++){
-		if (str[i] == ':' && !found1){
+    for (int i = 0; i < len; i++){
+		if (str[i] == ":" && !found_1){
 			found_1 = 1;
 		}
 
-		if (found1 && (str[i] == '/') && (found_c < 2)){
-			c++;
+		if (found_1 && (str[i] == "/") && (found_c < 2)){
+			found_c++;
 		}
 
-		if (found1 && (found_c >= 2)){
-			if ((str[i] != '/') && (str[i] != '.')){
+		if (found_1 && (found_c >= 2)){
+			if ((str[i] != "/") && (str[i] != ".")){
 				strcat(resposta, str[i]);
 			}
 			else{
 				if (i != idx_dot){
-					strcat(resposta, '_');
+					strcat(resposta, "_");
 				}
 				else{
-					strcat(resposta, '.');
+					strcat(resposta, ".");
 				}
 			}
 		}
@@ -56,31 +56,29 @@ size_t write_data(void *ptr, size_t size, size_t nmemb, FILE *stream){
 }
 
 int main(int argc, char *argv[]){
-	CURL *curl;
-	CURLcode res;
-	char input_filename[];
+	char input_filename[256];
 	pid_t parallel;
 	int multiple = 0;
 
 	if(argc < 2) {
-		printf('Modo de uso: %s <URL> -f <lista_download.txt>\n', argv[0]);
+		printf("Modo de uso: %s <URL> -f <lista_download.txt>\n", argv[0]);
 		return 1;
 	}
 
-	for (i = 1; i < (argc - 1); i++){
-		if (strcmp('-f', argv[i]) == 0){
+	for (int i = 1; i < (argc - 1); i++){
+		if (strcmp("-f", argv[i]) == 0){
 			input_filename = argv[i];
 			multiple = 1;
 		}
 	}
 
 	if (multiple){
-		FILE* file = fopen(input_filename, 'r');
+		FILE* file = fopen(input_filename, "r");
 		int len_file = 0;
 		char line[256];
-        char arr[5][256] = {''};
+        char arr[5][256] = {""};
 
-        while (fgets(line, sizeof(line), input)){
+        while (fgets(line, sizeof(line), file)){
 			len_file++;
             strcpy(arr[len_file], line);
         }
@@ -88,17 +86,18 @@ int main(int argc, char *argv[]){
 		for (int i = 0; i < len_file; i++){
             FILE *output;
             CURL *curl;
-            CURLcode result;
+            int result;
             parallel = fork();
             if (!parallel){
-                for (b = 0; arr[i][b] != '\0'; b++);
-                if((arr[i][b-1] = '\n')){
-                    arr[i][b-1] = '\0';
+				int x = 0;
+                for (x = 0; arr[i][x] != "\0"; x++);
+                if(arr[i][x-1] = "\n"){
+                    arr[i][x-1] = "\0";
                 }
             
                 char url_c[256] = process_url_name(arr[i]);
                 
-                output = fopen(url_c, 'wb');
+                output = fopen(url_c, "wb");
 
 				curl_global_init(CURL_GLOBAL_DEFAULT);
                 curl = curl_easy_init();
@@ -112,14 +111,14 @@ int main(int argc, char *argv[]){
                     result = curl_easy_perform(curl);
 
                     if (result == CURLE_OK){
-                        printf('URL %s baixada com sucesso.', url);
+                        printf("URL %s baixada com sucesso.", url_c);
                         curl_easy_cleanup(curl);
                         fclose(output);
                         exit(0);
                     }
 
 					else{
-                        printf('Erro: %s\n', curl_easy_strerror(result));
+                        printf("Erro: %s\n", curl_easy_strerror(result));
                         exit(0);
                     }     
                 }
@@ -138,13 +137,14 @@ int main(int argc, char *argv[]){
 	
 	else{
 		char url_c[50];
+		char arr[5][256] = {""};
         FILE *output;
         CURL *curl;
-        CURLcode result;
+        int result;
 
-    	char url_c[256] = process_url_name(arr[i]);
+    	url_c = process_url_name(arr[i]);
 
-        output = fopen(url_c, 'wb');
+        output = fopen(url_c, "wb");
 
         curl = curl_easy_init();
         curl_easy_setopt(curl, CURLOPT_URL, argv[1]);
@@ -154,12 +154,12 @@ int main(int argc, char *argv[]){
         result = curl_easy_perform(curl);
 
         if (result == CURLE_OK){
-            printf('URL %s baixada com sucesso.', url);
+            printf("URL %s baixada com sucesso.", url_c);
             fclose(output);
             curl_easy_cleanup(curl);
         }
 		else{
-            printf('Erro: %s\n', curl_easy_strerror(result));
+            printf("Erro: %s\n", curl_easy_strerror(result));
         }  
     }
 
