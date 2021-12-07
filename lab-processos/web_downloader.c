@@ -35,7 +35,7 @@ void process_str(char *str, char *buffer){
 	}
 	
 	for(int i = 0; i < strlen(buffer); i++){
-		if ((buffer[i] == '.' || buffer[i] == '/') && (i != idx_dot)){
+		if ((i != idx_dot) && (buffer[i] == '.' || buffer[i] == '/')){
 			buffer[i] = '_';
 		}
 	}
@@ -64,8 +64,6 @@ int main(int argc, char *argv[]) {
             parallel_f = fork();
 			
             if (parallel_f == 0){
-				int idx_dot = 0;
-
                 int b=0;
                 for (b=0; tot_l[i][b]!='\0'; b++);
                 if ((tot_l[i][b-1] = '\n')) {
@@ -94,7 +92,7 @@ int main(int argc, char *argv[]) {
                         return 0;
                     }
 					else{
-                        printf("Erro: %s\n\n", curl_easy_strerror(answer));
+                        printf("Erro: %s\n", curl_easy_strerror(answer));
                         return 0;
                     }     
                 }
@@ -104,8 +102,8 @@ int main(int argc, char *argv[]) {
                   
             } 
             else{
-                int wst;
-                wait(&wst);
+                int wait_p;
+                wait(&wait_p);
             }
         }
     }
@@ -114,7 +112,6 @@ int main(int argc, char *argv[]) {
         FILE *output;
         CURL *curl;
         int answer;
-		int idx_dot = 0;
 
         process_str(argv[1], url_c);
 
