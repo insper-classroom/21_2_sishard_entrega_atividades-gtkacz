@@ -29,13 +29,13 @@ void process_str(char *str, char *buffer){
 	slice_str(str, buffer, 7, strlen(str));
 	
 	for(int i = 0; i < strlen(buffer); i++){
-		if (strcmp(buffer[i], '.')){
+		if (buffer[i] == '.'){
 			idx_dot = i;
 		}
 	}
 	
 	for(int i = 0; i < strlen(buffer); i++){
-		if ((i != idx_dot) && (strcmp(buffer[i], '/') || strcmp(buffer[i], '.'))){
+		if ((i != idx_dot) && (buffer[i] == '/' || buffer[i] == '.')){
 			buffer[i] = '_';
 		}
 	}
