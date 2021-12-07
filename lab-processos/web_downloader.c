@@ -29,13 +29,13 @@ void process_str(char *str, char *buffer){
 	slice_str(str, buffer, 7, strlen(str));
 	
 	for(int i = 0; i < strlen(buffer); i++){
-		if (buffer[i] == '.'){
+		if (strcmp(buffer[i], '.')){
 			idx_dot = i;
 		}
 	}
 	
 	for(int i = 0; i < strlen(buffer); i++){
-		if ((i != idx_dot) && (buffer[i] == '.' || buffer[i] == '/')){
+		if ((i != idx_dot) && (strcmp(buffer[i], '/') || strcmp(buffer[i], '.'))){
 			buffer[i] = '_';
 		}
 	}
@@ -47,8 +47,8 @@ int main(int argc, char *argv[]) {
     if(strcmp(argv[1], "-f") == 0){
         FILE* input = fopen(argv[2], "r");
 		int len_i = 0;
-        char cur_l[512];
         char tot_l[5][512] = {""};
+        char cur_l[512];
 
         while(fgets(cur_l, sizeof(cur_l), input)){
             strcpy(tot_l[len_i], cur_l);
@@ -108,10 +108,10 @@ int main(int argc, char *argv[]) {
         }
     }
 	else{
-        char url_c[50];
+        char url_c[512];
+        int answer;
         FILE *output;
         CURL *curl;
-        int answer;
 
         process_str(argv[1], url_c);
 
