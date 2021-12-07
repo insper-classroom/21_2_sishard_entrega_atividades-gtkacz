@@ -23,19 +23,6 @@ void slice_str(const char *str, char *buffer, size_t start, size_t end){
     buffer[j] = 0;
 }
 
-void slice_str(const char * str, char * buffer, size_t start, size_t end){
-    size_t j = 0;
-    for ( size_t i = start; i <= end; ++i ) {
-        buffer[j++] = str[i];
-    }
-    buffer[j] = 0;
-}
-
-size_t write_data(void *ptr, size_t size, size_t nmemb, FILE *stream){
-    size_t written = fwrite(ptr, size, nmemb, stream);
-    return written;
-}
-
 int main(int argc, char *argv[]) {
     pid_t parallel_f;
 
