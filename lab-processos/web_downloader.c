@@ -10,98 +10,83 @@
 #include <sys/wait.h>
 #include <fcntl.h>
 
-void process_url_name(char *str){
-	size_t len = strlen(str);
-	char resposta[1024] = "";
-	int found_1 = 0;
-	int found_c = 0;
-	int idx_dot;
-	char dot_str = '.';
-	char slash_str = '/';
-	char double_str = ':';
-	char under_str = '_';
-
-	for (int i = 0; i < len; i++){
-		if (strcmp((char) str[i], dot_str)){
-			idx_dot = i;
-		}
-	}
-
-    for (int i = 0; i < len; i++){
-		if (strcmp((char) str[i], double_str) && !found_1){
-			found_1 = 1;
-		}
-
-		if (found_1 && strcmp((char) str[i], slash_str) && (found_c < 2)){
-			found_c++;
-		}
-
-		if (found_1 && (found_c >= 2)){
-			if (!strcmp((char) str[i], slash_str) && !strcmp((char) str[i], dot_str)){
-				strcat(resposta, (char) str[i]);
-			}
-			else{
-				if (i != idx_dot){
-					strcat(resposta, under_str);
-				}
-				else{
-					strcat(resposta, dot_str);
-				}
-			}
-		}
-	}
-
-	str = resposta;
-}
-
 size_t write_data(void *ptr, size_t size, size_t nmemb, FILE *stream){
     size_t written = fwrite(ptr, size, nmemb, stream);
     return written;
 }
 
+void slice_str(const char *str, char *buffer, size_t start, size_t end){
+    size_t j = 0;
+    for (size_t i = start; i <= end; ++i ) {
+        buffer[j++] = str[i];
+    }
+    buffer[j] = 0;
+}
+
 int main(int argc, char *argv[]) {
     pid_t parallel;
 
-	if(argc < 2) {
-		printf("Modo de uso: %s <URL> -f <lista_download.txt>\n", argv[0]);
-		return 1;
-	}
-
     if (strcmp(argv[1], "-f")){
-        FILE* fileo = fopen(argv[2], "r");
-		int len_arq = 0;
-        char line;
-        char char_a[5][1024] = {""};
+        FILE* input = fopen(argv[2], "r");
+		int len_file = 0;
+        char line[1024];
+        char arr[5][1024] = {""};
 
-        while(fgets(line, sizeof(line), fileo)){
-            strcpy(char_a[len_arq], line);
-            len_arq++;
+        while(fgets(line, sizeof(line), input)){
+            strcpy(arr[len_file], line);
+            len_file ++;
         }
+ 
 
-        for (int i = 0; i < len_arq; i++){
-            char site;
+        for (int i = 0; i < len_file; i++){
+            char url_c[1024];
+            int verifica = 0;
+			int result;
             FILE *output;
             CURL *curl;
-            int result;
-
+            
             parallel = fork();
 
             if (parallel){
                 int b=0;
-                for (b=0; char_a[i][b]!='\0'; b++);
-                if ((char_a[i][b-1] = '\n')) {
-                    char_a[i][b-1] = '\0';
+                for (b=0; arr[i][b]!='\0'; b++);
+                if ((arr[i][b-1] = '\n')) {
+                    arr[i][b-1] = '\0';
                 }
 
-                process_url_name(&site); 
-                
-                output = fopen(site, "wb");
+                for (int k = 0; k < 6; k++){
+                    if (arr[i][k] == 's'){
+                        verifica = 1;
+                    }
+                }
 
-				curl_global_init(CURL_GLOBAL_DEFAULT);
+                if (verifica == 1){
+                    slice_str(arr[i], url_c, 8, strlen(arr[i]));
+                } else {
+                    slice_str(arr[i], url_c, 7, strlen(arr[i]));
+                }
+            
+                int dot = 0;
+
+                for (int a= 0; a < strlen(url_c); a++){
+                    if (url_c[a] == '.'){
+                        dot = a;
+                    }
+                    
+                }
+         
+                for (int p = 0; p < strlen(url_c); p++){
+                    if ((url_c[p] == '.' || url_c[p] == '/') && (p != dot)){
+                        url_c[p] = '_';
+                    }
+                }   
+                
+                output = fopen(url_c, "wb");
+
                 curl = curl_easy_init();
 
-                if (curl){
-                    curl_easy_setopt(curl, CURLOPT_URL, char_a[i]);
+                if(curl){
+                    curl_easy_setopt(curl, CURLOPT_URL, arr[i]);
                     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
                     curl_easy_setopt(curl, CURLOPT_WRITEDATA, output);
                     curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1L);
@@ -109,7 +94,7 @@ int main(int argc, char *argv[]) {
                     result = curl_easy_perform(curl);
 
                     if (result == CURLE_OK){
-                        printf("URL %s baixada com sucesso.\n", char_a[i]);
+                        printf("URL %s baixada com sucesso.\n", arr[i]);
                         curl_easy_cleanup(curl);
                         fclose(output);
                         return 0;
@@ -124,21 +109,47 @@ int main(int argc, char *argv[]) {
                 }
                   
             } 
-            else{
+            else {
                 int wst;
                 wait(&wst);
             }
         }
     }
 	else{
-        char site[50];
+        char url_c[50];
+		int verifica = 0;
+        int result;
         FILE *output;
         CURL *curl;
-        int result;
 
-        process_url_name(&site);
+        for (int i = 0; i < 6; i++){
+            if (argv[1][i] == 's'){
+                verifica = 1;
+            }
+        }
+
+        if (verifica == 1){
+            slice_str(argv[1], url_c, 8, strlen(argv[1]));
+        } else {
+            slice_str(argv[1], url_c, 7, strlen(argv[1]));
+        }
        
-        output = fopen(site, "wb");
+        int dot = 0;
+
+        for (int i = 0; i < strlen(url_c); i++){
+            if (url_c[i] == '.'){
+                dot = i;
+            }
+            
+        }
+
+        for (int i = 0; i < strlen(url_c); i++){
+            if ((url_c[i] == '.' || url_c[i] == '/') && (i != dot)){
+                url_c[i] = '_';
+            }
+        }
+
+        output = fopen(url_c, "wb");
 
         curl = curl_easy_init();
         curl_easy_setopt(curl, CURLOPT_URL, argv[1]);
@@ -151,8 +162,7 @@ int main(int argc, char *argv[]) {
             printf("URL %s baixada com sucesso.\n", argv[1]);
             fclose(output);
             curl_easy_cleanup(curl);
-        }
-		else{
+        } else{
             printf("Erro: %s\n", curl_easy_strerror(result));
         }  
     }
@@ -167,3 +177,4 @@ int main(int argc, char *argv[]) {
 //https://curl.se/libcurl/c/libcurl-easy.html
 //https://www.techgalery.com/2020/12/step-by-step-using-curl-library-using-c.html
 //https://stackoverflow.com/questions/1636333/download-file-using-libcurl-in-c-c
+//https://stackoverflow.com/questions/26620388/c-substrings-c-string-slicing
