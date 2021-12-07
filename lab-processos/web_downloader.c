@@ -16,10 +16,10 @@ void process_url_name(char *str){
 	int found_1 = 0;
 	int found_c = 0;
 	int idx_dot;
-	char dot_str[256] = ".";
-	char slash_str[256] = "/";
-	char double_str[256] = ":";
-	char under_str[256] = "_";
+	char dot_str = '.';
+	char slash_str = '/';
+	char double_str = ':';
+	char under_str = '_';
 
 	for (int i = 0; i < len; i++){
 		if (strcmp((char) str[i], dot_str)){
@@ -71,7 +71,7 @@ int main(int argc, char *argv[]) {
         FILE* fileo = fopen(argv[2], "r");
 		int len_arq = 0;
         char line;
-        char char_a[5][256] = {""};
+        char char_a[5][1024] = {""};
 
         while(fgets(line, sizeof(line), fileo)){
             strcpy(char_a[len_arq], line);
